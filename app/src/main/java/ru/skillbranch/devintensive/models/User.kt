@@ -11,7 +11,7 @@ data class User(
     var rating: Int = 0,
     var respect: Int = 0,
     val lastVisit: Date? = Date(),
-    var isonline: Boolean = false
+    var isOnline: Boolean = false
 ) {
 
     constructor(id: String, firstName: String?, lastName: String?) : this(
@@ -48,7 +48,7 @@ data class User(
             rating: Int,
             respect: Int,
             lastVisit: Date?,
-            isonline: Boolean
+            isOnline: Boolean
         ): User {
             return User(
                 id = "${if (id.isNullOrEmpty()) ++lastid else id}",
@@ -58,7 +58,7 @@ data class User(
                 rating = rating,
                 respect = respect,
                 lastVisit = lastVisit,
-                isonline = isonline
+                isOnline = isOnline
             )
         }
     }
@@ -71,7 +71,7 @@ data class User(
         var rating: Int = 0,
         var respect: Int = 0,
         var lastVisit: Date? = null,
-        var isonline: Boolean = false
+        var isOnline: Boolean = false
     ) {
         fun id(id: String) = apply { this.id = id }
         fun firstName(firstName: String) = apply { this.firstName = firstName }
@@ -80,7 +80,7 @@ data class User(
         fun rating(rating: Int) = apply { this.rating = rating }
         fun respect(respect: Int) = apply { this.respect = respect }
         fun lastVisit(lastVisit: Date) = apply { this.lastVisit = lastVisit }
-        fun isonline(isonline: Boolean) = apply { this.isonline = isonline }
-        fun build() = User.buildUser(id, firstName, lastName, avatar, rating, respect, lastVisit, isonline)
+        fun isOnline(isOnline: Boolean) = apply { this.isOnline = isOnline }
+        fun build() = User.buildUser(id, firstName, lastName, avatar, rating, respect, lastVisit, isOnline)
     }
 }
