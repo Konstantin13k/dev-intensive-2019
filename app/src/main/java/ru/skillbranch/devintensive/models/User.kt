@@ -40,7 +40,7 @@ data class User(
             return User(id = "$lastid", firstName = firstName, lastName = lastName)
         }
 
-        fun buildUser(
+        private fun buildUser(
             id: String? = null,
             firstName: String?,
             lastName: String?,
