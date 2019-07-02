@@ -21,7 +21,6 @@ object Utils {
 
     private fun getFirstChar(string: String?): Char? = if (string.isNullOrEmpty()) null else string.trim().firstOrNull()
 
-
     fun transliteration(payload: String, divider: String = " "): String {
         val iterator: CharIterator = payload.toCharArray().iterator()
         val builder: StringBuilder = java.lang.StringBuilder()
