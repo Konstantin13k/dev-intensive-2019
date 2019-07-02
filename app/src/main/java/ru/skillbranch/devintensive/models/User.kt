@@ -48,7 +48,7 @@ data class User(
             rating: Int,
             respect: Int,
             lastVisit: Date?,
-            isOnline: Boolean
+            isOnline: Boolean = false
         ): User {
             return User(
                 id = "${if (id.isNullOrEmpty()) ++lastid else id}",
@@ -80,7 +80,7 @@ data class User(
         fun rating(rating: Int) = apply { this.rating = rating }
         fun respect(respect: Int) = apply { this.respect = respect }
         fun lastVisit(lastVisit: Date) = apply { this.lastVisit = lastVisit }
-        fun isOnline(isOnline: Boolean) = apply { this.isOnline = isOnline }
+        fun isOnline(isOnline: Boolean?) = apply { this.isOnline = isOnline ?: false }
         fun build() = User.buildUser(id, firstName, lastName, avatar, rating, respect, lastVisit, isOnline)
     }
 }
