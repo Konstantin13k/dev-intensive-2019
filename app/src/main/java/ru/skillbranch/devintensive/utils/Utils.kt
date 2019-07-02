@@ -13,11 +13,14 @@ object Utils {
     private fun converToNull(string: String?): String? = if (string.isNullOrEmpty()) null else string
 
     fun toInitials(firstName: String?, lastName: String?): String? {
-        val fInitial = firstName?.first() ?: ""
-        val lInitial = lastName?.first() ?: ""
-        val initials = "$fInitial$lInitial".trim().toUpperCase()
-        return if (initials.isEmpty()) null else initials
+        val fInitial = getFirstChar(firstName) ?: ""
+        val lInitial = getFirstChar(lastName) ?: ""
+        val initials = "$fInitial$lInitial"
+        return if (initials.isEmpty()) null else initials.toUpperCase()
     }
+
+    private fun getFirstChar(string: String?): Char? = if (string.isNullOrEmpty()) null else string.trim().firstOrNull()
+
 
     fun transliteration(payload: String, divider: String = " "): String {
         val iterator: CharIterator = payload.toCharArray().iterator()
