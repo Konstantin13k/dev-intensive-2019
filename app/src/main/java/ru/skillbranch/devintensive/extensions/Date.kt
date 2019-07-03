@@ -69,10 +69,39 @@ private fun diff(timeDiff: Long, units: TimeUnits): String {
     }}"
 }
 
-
 enum class TimeUnits {
-    SECOND,
-    MINUTE,
-    HOUR,
-    DAY
+    SECOND {
+        override fun plural(value: Int) = "$value ${when (if (value > 20) value % 10 else value) {
+            1 -> "секунду"
+            in 2..4 -> "секунды"
+            else -> "секунд"
+        }
+        }"
+    },
+    MINUTE {
+        override fun plural(value: Int) = "$value ${when (if (value > 20) value % 10 else value) {
+            1 -> "минуту"
+            in 2..4 -> "минуты"
+            else -> "минут"
+        }
+        }"
+    },
+    HOUR {
+        override fun plural(value: Int) = "$value ${when (if (value > 20) value % 10 else value) {
+            1 -> "час"
+            in 2..4 -> "часа"
+            else -> "часов"
+        }
+        }"
+    },
+    DAY {
+        override fun plural(value: Int) = "$value ${when (if (value > 20) value % 10 else value) {
+            1 -> "день"
+            in 2..4 -> "дня"
+            else -> "дней"
+        }
+        }"
+    };
+
+    abstract fun plural(value: Int): String
 }
