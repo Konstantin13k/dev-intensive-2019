@@ -21,11 +21,5 @@ fun Activity.isKeyboardOpen(): Boolean {
 }
 
 fun Activity.isKeyboardClosed(): Boolean {
-    val r = Rect()
-    val rootview = this.window.decorView
-    rootview.getWindowVisibleDisplayFrame(r)
-    val screenHeight = rootview.height
-    val keypadHeight = screenHeight - r.bottom
-
-    return keypadHeight < screenHeight * 0.15
+    return !isKeyboardOpen()
 }

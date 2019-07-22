@@ -14,7 +14,7 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
     fun listenAnswer(answer: String): Pair<String, Triple<Int, Int, Int>> {
         val (valid, error) = question.validation(answer)
         if (!valid) {
-            return "$error${question.question}" to status.color
+            return (if(question == Question.IDLE) question.question else "$error\n${question.question}") to status.color
         }
         return if (question.answers.contains(answer.toLowerCase())) {
             question = question.nextQuestion()
@@ -54,27 +54,27 @@ class Bender(var status: Status = Status.NORMAL, var question: Question = Questi
         NAME("Как меня зовут?", listOf("бендер", "bender")) {
             override fun nextQuestion(): Question = PROFESSION
             override fun validation(text: String?): Pair<Boolean, String> =
-                !(text.isNullOrEmpty() || text.first().isLowerCase()) to "Имя должно начинаться с заглавной буквы\n"
+                !(text.isNullOrEmpty() || text.first().isLowerCase()) to "Имя должно начинаться с заглавной буквы"
         },
         PROFESSION("Назови мою профессию?", listOf("сгибальщик", "bender")) {
             override fun nextQuestion(): Question = MATERIAL
             override fun validation(text: String?): Pair<Boolean, String> =
-                !(text.isNullOrEmpty() || text.first().isUpperCase()) to "Профессия должна начинаться со строчной буквы\n"
+                !(text.isNullOrEmpty() || text.first().isUpperCase()) to "Профессия должна начинаться со строчной буквы"
         },
         MATERIAL("Из чего я сделан?", listOf("металл", "дерево", "metal", "iron", "wood")) {
             override fun nextQuestion(): Question = BDAY
             override fun validation(text: String?): Pair<Boolean, String> =
-                !(text.isNullOrEmpty() || text.matches(".*\\d+.*".toRegex())) to "Материал не должен содержать цифр\n"
+                !(text.isNullOrEmpty() || text.matches(".*\\d+.*".toRegex())) to "Материал не должен содержать цифр"
         },
         BDAY("Когда меня создали?", listOf("2993")) {
             override fun nextQuestion(): Question = SERIAL
             override fun validation(text: String?): Pair<Boolean, String> =
-                (!text.isNullOrEmpty() && text.matches("-?\\d+(\\.\\d+)?".toRegex())) to "Год моего рождения должен содержать только цифры\n"
+                (!text.isNullOrEmpty() && text.matches("-?\\d+(\\.\\d+)?".toRegex())) to "Год моего рождения должен содержать только цифры"
         },
         SERIAL("Мой серийный номер?", listOf("2716057")) {
             override fun nextQuestion(): Question = IDLE
             override fun validation(text: String?): Pair<Boolean, String> =
-                (!text.isNullOrEmpty() && text.matches("-?\\d+(\\.\\d+)?".toRegex()) && text.length == 7) to "Серийный номер содержит только цифры, и их 7\n"
+                (!text.isNullOrEmpty() && text.matches("-?\\d+(\\.\\d+)?".toRegex()) && text.length == 7) to "Серийный номер содержит только цифры, и их 7"
         },
         IDLE("На этом все, вопросов больше нет", listOf()) {
             override fun nextQuestion(): Question = IDLE
