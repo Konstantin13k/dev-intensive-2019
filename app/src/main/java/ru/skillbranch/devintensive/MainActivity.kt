@@ -24,6 +24,7 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, TextView.OnEdito
 
     lateinit var benderObj: Bender
 
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -87,22 +88,35 @@ class MainActivity : AppCompatActivity(), View.OnClickListener, TextView.OnEdito
 
     override fun onClick(v: View?) {
         if (v?.id == R.id.iv_send) {
-            val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
-            messageEt.setText("")
-            val (r, g, b) = color
-            benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
-            textTxt.text = phrase
+            val (valid, error) = benderObj.question.validation(messageEt.text.toString())
+            if (valid) {
+                val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
+                messageEt.setText("")
+                val (r, g, b) = color
+                benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
+                textTxt.text = phrase
+            } else {
+//                messageEt.error = error
+                val text = "$error${benderObj.question.question}"
+                textTxt.text = text
+            }
         }
     }
 
     override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
         if (actionId == EditorInfo.IME_ACTION_DONE) {
-            val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
-            messageEt.setText("")
-            val (r, g, b) = color
-            benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
-            textTxt.text = phrase
-            this.hideKeyboard()
+            val (valid, error) = benderObj.question.validation(messageEt.text.toString())
+            if (valid) {
+                val (phrase, color) = benderObj.listenAnswer(messageEt.text.toString().toLowerCase())
+                messageEt.setText("")
+                val (r, g, b) = color
+                benderImage.setColorFilter(Color.rgb(r, g, b), PorterDuff.Mode.MULTIPLY)
+                textTxt.text = phrase
+                this.hideKeyboard()
+            } else {
+                val text = "$error${benderObj.question.question}"
+                textTxt.text = text
+            }
         }
         return false
     }
