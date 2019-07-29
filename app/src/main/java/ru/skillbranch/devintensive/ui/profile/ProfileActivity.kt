@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
+import ru.skillbranch.devintensive.utils.Utils
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
 
 class ProfileActivity : AppCompatActivity() {
@@ -82,6 +83,12 @@ class ProfileActivity : AppCompatActivity() {
         btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
         }
+        et_repository.onFocusChangeListener = View.OnFocusChangeListener { view, b ->
+            val repository = et_repository.text.toString()
+            if (repository.isNotEmpty() && !Utils.validationGitHub(repository)) {
+                et_repository.error = "Невалидный адрес репозитория"
+            }
+        }
     }
 
     private fun showCurrentMode(isEdit: Boolean) {
@@ -118,7 +125,11 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileinfo() {
-        val test = et_repository.text.toString()
+        val repository = et_repository.text.toString()
+        if (repository.isNotEmpty() && !Utils.validationGitHub(repository)) {
+            et_repository.text.clear()
+            et_repository.error = "Невалидный адрес репозитория"
+        }
 
         Profile(
             et_first_name.text.toString(),
@@ -129,4 +140,16 @@ class ProfileActivity : AppCompatActivity() {
             viewModel.saveProfileDate(this)
         }
     }
+
+//    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
+//        Log.d("M_ProfileActivity", "testsssssssssssssssssssssssss")
+//        if (v?.id == et_repository.id && actionId == EditorInfo.IME_ACTION_DONE) {
+//            Log.d("M_ProfileActivity", "valid")
+//            val repository = et_repository.text.toString()
+//            if (repository.isNotEmpty() && !Utils.validationGitHub(repository)) {
+//                et_repository.error = "Невалидный адрес репозитория"
+//            }
+//        }
+//        return false
+//    }
 }
