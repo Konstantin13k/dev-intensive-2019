@@ -8,7 +8,6 @@
         tools:context=".ui.profile.ProfileActivity"
         android:orientation="vertical">
 
-
     <FrameLayout android:layout_width="match_parent" android:layout_height="wrap_content"
                  android:layout_gravity="center">
         <ru.skillbranch.devintensive.ui.custom.AspectRatioImageView
@@ -19,7 +18,9 @@
                 app:aspectRatio="1.78"/>
 
 
-        <RelativeLayout android:layout_width="match_parent" android:layout_height="wrap_content">
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center">
             <ImageButton
                     android:id="@+id/btn_switch_theme"
                     android:layout_width="@dimen/btn_round_size_40"
@@ -28,16 +29,21 @@
                     android:src="@drawable/ic_switch_day_night"
                     android:layout_toLeftOf="@id/iv_avatar"
                     android:layout_marginTop="36dp"
-                    android:layout_marginRight="@dimen/spacing_huge_32"
-            />
+                    android:layout_marginRight="@dimen/spacing_huge_32"/>
 
-            <ImageView
+            <!--<ru.skillbranch.devintensive.ui.custom.CircleImageView-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:src="@drawable/ic_launcher_background"-->
+            <!--android:layout_gravity="center"-->
+            <!--/>-->
+
+            <ru.skillbranch.devintensive.ui.custom.CircleImageView
                     android:id="@+id/iv_avatar"
                     android:layout_width="@dimen/avatar_round_size"
                     android:layout_height="@dimen/avatar_round_size"
                     android:src="@drawable/avatar_default"
-                    android:layout_centerHorizontal="true"
-            />
+                    android:layout_centerHorizontal="true"/>
 
             <ImageButton
                     android:id="@+id/btn_edit"

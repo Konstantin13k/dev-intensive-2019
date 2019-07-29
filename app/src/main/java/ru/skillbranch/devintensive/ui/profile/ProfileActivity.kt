@@ -37,6 +37,7 @@ class ProfileActivity : AppCompatActivity() {
     override fun onSaveInstanceState(outState: Bundle?) {
         super.onSaveInstanceState(outState)
         outState?.putBoolean(IS_EDIT_MODE, isEditMode)
+        Log.d("M_ProfileActivity", "is edit mode save!")
     }
 
     private fun initViewModel() {
@@ -71,6 +72,7 @@ class ProfileActivity : AppCompatActivity() {
         )
 
         isEditMode = savedInstanceState?.getBoolean(IS_EDIT_MODE, false) ?: false
+        showCurrentMode(isEditMode)
 
         btn_edit.setOnClickListener {
             if (isEditMode) saveProfileinfo()
