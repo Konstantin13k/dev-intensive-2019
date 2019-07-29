@@ -118,6 +118,8 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileinfo() {
+        val test = et_repository.text.toString()
+
         Profile(
             et_first_name.text.toString(),
             et_last_name.text.toString(),

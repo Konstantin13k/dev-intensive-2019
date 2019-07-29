@@ -1,6 +1,13 @@
 package ru.skillbranch.devintensive.utils
 
 object Utils {
+    private val exceptions = listOf(
+        "enterprise", "features",
+        "topics", "collections", "trending", "events"
+        , "marketplace", "pricing", "nonprofit", "customer-stories"
+        , "security", "login", "join"
+    )
+
     fun parseFullName(fullName: String?): Pair<String?, String?> {
         val parts: List<String>? = fullName?.split(" ")
 
@@ -67,5 +74,17 @@ object Utils {
             builder.append(if (isLowCase) ch else ch.toUpperCase())
         }
         return builder.toString()
+    }
+
+    fun validationGitHub(string: String): Boolean = with(string) {
+        if (matches("github.com/.*".toRegex())
+            || matches("https://github.com/.*".toRegex())
+            || matches("https://www.github.com/.*".toRegex())
+            || matches("www.github.com/.*".toRegex())
+        ) {
+            with(split("github.com/".toRegex())[1]) {
+                return !exceptions.contains(this) && isNotEmpty() && !matches(".*/.*".toRegex())
+            }
+        } else false
     }
 }
