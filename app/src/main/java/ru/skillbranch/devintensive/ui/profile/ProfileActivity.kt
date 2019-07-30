@@ -128,7 +128,6 @@ class ProfileActivity : AppCompatActivity() {
         val repository = et_repository.text.toString()
         if (repository.isNotEmpty() && !Utils.validationGitHub(repository)) {
             et_repository.text.clear()
-            et_repository.error = "Невалидный адрес репозитория"
         }
 
         Profile(

@@ -71,7 +71,12 @@ object Utils {
                 'я' -> "ya"
                 else -> divider
             }
-            builder.append(if (isLowCase) ch else ch.toUpperCase())
+            if(ch.length == 1){
+                builder.append(if (isLowCase) ch else ch.toUpperCase())
+            }else {
+                val char = ch.first()
+                builder.append(if(isLowCase) ch else char.toUpperCase() + ch.substring(1))
+            }
         }
         return builder.toString()
     }
