@@ -24,22 +24,22 @@ class ProfileViewModel : ViewModel() {
         repositoryState.value = state
     }
 
-    fun getProfileData(): LiveData<Profile> {
-        return profileData
-    }
+    fun getProfileDate(): LiveData<Profile> = profileData
 
     fun getTheme(): LiveData<Int> = appTheme
 
-    fun saveProfileData(profile: Profile) {
+    fun saveProfileDate(profile: Profile) {
         repository.saveProfile(profile)
         profileData.value = profile
     }
 
     fun switchTheme() {
-        if (appTheme.value == AppCompatDelegate.MODE_NIGHT_YES)
+        if (appTheme.value == AppCompatDelegate.MODE_NIGHT_YES) {
             appTheme.value = AppCompatDelegate.MODE_NIGHT_NO
-        else appTheme.value = AppCompatDelegate.MODE_NIGHT_YES
+        } else {
+            appTheme.value = AppCompatDelegate.MODE_NIGHT_YES
 
+        }
         repository.saveAppTheme(appTheme.value!!)
     }
 }

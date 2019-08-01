@@ -3,84 +3,89 @@ package ru.skillbranch.devintensive.utils
 import android.content.res.Resources
 
 object Utils {
-    private val translitMap: Map<Char, String> = hashMapOf(
-            'а' to "a",
-            'б' to "b",
-            'в' to "v",
-            'г' to "g",
-            'д' to "d",
-            'е' to "e",
-            'ё' to "e",
-            'ж' to "zh",
-            'з' to "z",
-            'и' to "i",
-            'й' to "i",
-            'к' to "k",
-            'л' to "l",
-            'м' to "m",
-            'н' to "n",
-            'о' to "o",
-            'п' to "p",
-            'р' to "r",
-            'с' to "s",
-            'т' to "t",
-            'у' to "u",
-            'ф' to "f",
-            'х' to "h",
-            'ц' to "c",
-            'ч' to "ch",
-            'ш' to "sh",
-            'щ' to "sh'",
-            'ъ' to "",
-            'ы' to "i",
-            'ь' to "",
-            'э' to "e",
-            'ю' to "yu",
-            'я' to "ya"
+    private val exceptions = listOf(
+        "enterprise", "features",
+        "topics", "collections", "trending", "events"
+        , "marketplace", "pricing", "nonprofit", "customer-stories"
+        , "security", "login", "join"
     )
 
-    private val ignored = setOf("enterprise", "features", "topics",
-            "collections", "trending", "events", "marketplace", "pricing", "nonprofit",
-            "customer-stories", "security", "login", "join")
-
-    fun parseFullName(fullName: String?) : Pair<String?, String?> {
-        val processedString = fullName?.trim()
-        if (processedString.isNullOrBlank())
-            return null to null
-        val parts : List<String>? = processedString.split("\\s+".toRegex())
+    fun parseFullName(fullName: String?): Pair<String?, String?> {
+        val parts: List<String>? = fullName?.split(" ")
 
         val firstName = parts?.getOrNull(0)
         val lastName = parts?.getOrNull(1)
-        return firstName to lastName
+
+        return converToNull(firstName) to converToNull(lastName)
     }
+
+    private fun converToNull(string: String?): String? = if (string.isNullOrEmpty()) null else string
+
+    fun toInitials(firstName: String?, lastName: String?): String? {
+        val fInitial = getFirstChar(firstName) ?: ""
+        val lInitial = getFirstChar(lastName) ?: ""
+        val initials = "$fInitial$lInitial"
+        return if (initials.isEmpty()) null else initials.toUpperCase()
+    }
+
+    private fun getFirstChar(string: String?): Char? = if (string.isNullOrEmpty()) null else string.trim().firstOrNull()
 
     fun transliteration(payload: String, divider: String = " "): String {
-        var processedString = payload.trim()
-        val charSet = processedString.toSet()
-        for (char in charSet) {
-            if (translitMap.containsKey(char.toLowerCase())) {
-                processedString = if (char.isUpperCase())
-                    processedString.replace("$char".toRegex(), translitMap.getValue(char.toLowerCase()).capitalize())
-                else
-                    processedString.replace("$char".toRegex(), translitMap.getValue(char))
+        val iterator: CharIterator = payload.toCharArray().iterator()
+        val builder: StringBuilder = java.lang.StringBuilder()
+
+        while (iterator.hasNext()) {
+            val c = iterator.nextChar()
+            val isLowCase = c.isLowerCase()
+            val ch: String = when (c.toLowerCase()) {
+                'а' -> "a"
+                'б' -> "b"
+                'в' -> "v"
+                'г' -> "g"
+                'д' -> "d"
+                'е' -> "e"
+                'ё' -> "e"
+                'ж' -> "zh"
+                'з' -> "z"
+                'и' -> "i"
+                'й' -> "i"
+                'к' -> "k"
+                'л' -> "l"
+                'м' -> "m"
+                'н' -> "n"
+                'о' -> "o"
+                'п' -> "p"
+                'р' -> "r"
+                'с' -> "s"
+                'т' -> "t"
+                'у' -> "u"
+                'ф' -> "f"
+                'х' -> "h"
+                'ц' -> "c"
+                'ч' -> "ch"
+                'ш' -> "sh"
+                'щ' -> "sh"
+                'Ъ' -> ""
+                'ы' -> "i"
+                'ь' -> ""
+                'э' -> "e"
+                'ю' -> "yu"
+                'я' -> "ya"
+                else -> divider
+            }
+            if(ch.length == 1){
+                builder.append(if (isLowCase) ch else ch.toUpperCase())
+            }else {
+                val char = ch.first()
+                builder.append(if(isLowCase) ch else char.toUpperCase() + ch.substring(1))
             }
         }
-        return processedString.replace(" ", divider)
+        return builder.toString()
     }
 
-    fun toInitials(firstName: String?, lastName: String?) : String? {
-        if (firstName?.trim().isNullOrBlank() && lastName?.trim().isNullOrBlank())
-            return null
-        val firstInitial = if (!firstName.isNullOrBlank())
-            firstName.trim()[0].toUpperCase() else ""
-        val secondInitial = if (!lastName.isNullOrBlank())
-            lastName.trim()[0].toUpperCase() else ""
-        return "$firstInitial$secondInitial"
-    }
-
-    fun isRepositoryValid(repository: String): Boolean {
-        val regex = Regex("^(?:https://)?(?:www.)?(?:github.com/)(?!${ignored.joinToString("|")})\\w+$")
-        return repository.isEmpty() || regex.matches(repository)
+    fun isValid(rep: String): Boolean {
+        val regex = Regex("^(?:https://)?(?:www.)?(?:github.com/)(?!${exceptions.joinToString("|")})\\w+$")
+        return rep.isEmpty() || regex.matches(rep)
     }
 
     fun convertPxToDp(px: Int): Int {
