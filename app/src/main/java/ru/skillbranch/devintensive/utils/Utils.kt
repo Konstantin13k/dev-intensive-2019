@@ -70,13 +70,6 @@ object Utils {
             'я' to "ya"
     )
 
-//    private val exceptions = listOf(
-//            "enterprise", "features",
-//            "topics", "collections", "trending", "events"
-//            , "marketplace", "pricing", "nonprofit", "customer-stories"
-//            , "security", "login", "join"
-//    )
-
     fun isValid(rep: String): Boolean {
         val regex = Regex("^(https://)?(www.)?(github.com/)(?!(${getRegexExceptions()})(?=/|\$))(?![\\W])(?!\\w+[-]{2})[a-zA-Z0-9-]+(?<![-])(/)?$")
         return rep.isEmpty() || regex.matches(rep)
