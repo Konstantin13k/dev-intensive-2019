@@ -84,14 +84,6 @@ class ProfileActivity : AppCompatActivity() {
         isEditMode = savedInstanceState?.getBoolean(IS_EDIT_MODE, false) ?: false
         showCurrentMode(isEditMode)
 
-        et_repository.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
-            override fun afterTextChanged(s: Editable?) {
-                viewModel.setRepositoryState(!Utils.isValid(s.toString()))
-            }
-        })
-
         btn_edit.setOnClickListener {
             if (wr_repository.isErrorEnabled) {
                 et_repository.text?.clear()
@@ -104,6 +96,13 @@ class ProfileActivity : AppCompatActivity() {
         btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
         }
+        et_repository.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
+            override fun afterTextChanged(s: Editable?) {
+                viewModel.setRepositoryState(!Utils.isValid(s.toString()))
+            }
+        })
     }
 
     private fun showCurrentMode(isEdit: Boolean) {
