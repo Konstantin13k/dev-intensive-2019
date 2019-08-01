@@ -84,7 +84,7 @@ class ProfileActivity : AppCompatActivity() {
         showCurrentMode(isEditMode)
 
         btn_edit.setOnClickListener {
-            if (wr_repository.isErrorEnabled) {
+            if (wr_repository.error == "Невалидный адрес репозитория"){
                 et_repository.setText("")
             }
             if (isEditMode) saveProfileInfo()
