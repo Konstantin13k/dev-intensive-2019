@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import ru.skillbranch.devintensive.repositories.PreferencesRepository
 
 class App : Application() {
+
     companion object {
         private var instance: App? = null
 

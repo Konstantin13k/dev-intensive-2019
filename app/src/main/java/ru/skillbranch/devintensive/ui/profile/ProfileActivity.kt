@@ -3,7 +3,6 @@ package ru.skillbranch.devintensive.ui.profile
 import android.content.Context
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -11,6 +10,7 @@ import android.util.TypedValue
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import kotlinx.android.synthetic.main.activity_profile.*
@@ -38,19 +38,14 @@ class ProfileActivity : AppCompatActivity() {
         initViewModel()
     }
 
-    override fun onSaveInstanceState(outState: Bundle?) {
-        super.onSaveInstanceState(outState)
-        outState?.putBoolean(IS_EDIT_MODE, isEditMode)
-    }
-
     private fun initViewModel() {
         viewModel = ViewModelProviders.of(this).get(ProfileViewModel::class.java)
-        viewModel.getProfileDate().observe(this, Observer { updateUI(it) })
+        viewModel.getProfileData().observe(this, Observer { updateUI(it) })
         viewModel.getTheme().observe(this, Observer { updateTheme(it) })
-        viewModel.getRepositoryState().observe(this, Observer { upRepository(it) })
+        viewModel.getRepositoryState().observe(this, Observer { updateRepository(it) })
     }
 
-    private fun upRepository(isError: Boolean) {
+    private fun updateRepository(isError: Boolean) {
         wr_repository.isErrorEnabled = isError
         wr_repository.error = if (isError) "Невалидный адрес репозитория" else null
     }
@@ -64,8 +59,14 @@ class ProfileActivity : AppCompatActivity() {
             for ((k, v) in viewFields) {
                 v.text = it[k].toString()
             }
-            drawDefaultAvatar(it["initials"].toString())
         }
+        updateAvatar(profile)
+    }
+
+    private fun updateAvatar(profile: Profile) {
+        val initials = Utils.toInitials(
+                Utils.transliteration(profile.firstName), Utils.transliteration(profile.lastName))
+        iv_avatar.generateAvatar(initials, Utils.convertSpToPx(48))
     }
 
     private fun initViews(savedInstanceState: Bundle?) {
@@ -77,10 +78,9 @@ class ProfileActivity : AppCompatActivity() {
                 "about" to et_about,
                 "repository" to et_repository,
                 "rating" to tv_rating,
-                "respect" to tv_respect
-        )
+                "respect" to tv_respect)
 
-        isEditMode = savedInstanceState?.getBoolean(IS_EDIT_MODE, false) ?: false
+        isEditMode = savedInstanceState?.getBoolean(IS_EDIT_MODE) ?: false
         showCurrentMode(isEditMode)
 
         btn_edit.setOnClickListener {
@@ -88,26 +88,32 @@ class ProfileActivity : AppCompatActivity() {
                 et_repository.text?.clear()
                 viewModel.setRepositoryState(false)
             }
-            if (isEditMode) saveProfileinfo()
-            isEditMode = !isEditMode
+            if (isEditMode) saveProfileInfo()
+            isEditMode = isEditMode.not()
             showCurrentMode(isEditMode)
         }
+
         btn_switch_theme.setOnClickListener {
             viewModel.switchTheme()
         }
+
         et_repository.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
             override fun afterTextChanged(s: Editable?) {
-                viewModel.setRepositoryState(!Utils.isValid(s.toString()))
+                viewModel.setRepositoryState(!Utils.isRepositoryValid(s.toString()))
             }
         })
     }
 
+
     private fun showCurrentMode(isEdit: Boolean) {
-        val info = viewFields.filter { setOf("firstName", "lastName", "about", "repository").contains(it.key) }
-        for ((_, v) in info) {
-            v as EditText
+        val info = viewFields.filter {
+            setOf("firstName", "lastName", "about", "repository").contains(it.key)
+        }
+
+        info.forEach {
+            val v = it.value as EditText
             v.isFocusable = isEdit
             v.isFocusableInTouchMode = isEdit
             v.isEnabled = isEdit
@@ -116,36 +122,35 @@ class ProfileActivity : AppCompatActivity() {
 
         ic_eye.visibility = if (isEdit) View.GONE else View.VISIBLE
         wr_about.isCounterEnabled = isEdit
-
         with(btn_edit) {
             val filter: ColorFilter? = if (isEdit) {
-                PorterDuffColorFilter(
-                        resources.getColor(R.color.color_accent, theme),
-                        PorterDuff.Mode.SRC_IN
-                )
-            } else {
-                null
-            }
-            val icon = if (isEdit) {
-                resources.getDrawable(R.drawable.ic_save_black_24dp, theme)
-            } else {
-                resources.getDrawable(R.drawable.ic_edit_black_24dp, theme)
-            }
+                PorterDuffColorFilter(resources.getColor(R.color.color_accent, theme), PorterDuff.Mode.SRC_IN)
+            } else null
+
+            val icon =
+                    if (isEdit)
+                        resources.getDrawable(R.drawable.ic_save_black_24dp, theme)
+                    else resources.getDrawable(R.drawable.ic_edit_black_24dp, theme)
 
             background.colorFilter = filter
             setImageDrawable(icon)
         }
     }
 
-    private fun saveProfileinfo() {
+    private fun saveProfileInfo() {
         Profile(
                 et_first_name.text.toString(),
                 et_last_name.text.toString(),
                 et_about.text.toString(),
                 et_repository.text.toString()
         ).apply {
-            viewModel.saveProfileDate(this)
+            viewModel.saveProfileData(this)
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState)
+        outState?.putBoolean(IS_EDIT_MODE, isEditMode)
     }
 
     private fun drawDefaultAvatar(initials: String, textSize: Float = 48f, color: Int = Color.WHITE) {
@@ -154,18 +159,18 @@ class ProfileActivity : AppCompatActivity() {
         iv_avatar.setImageDrawable(drawable)
     }
 
-    private fun textAsBitmap(text:String, textSize:Float, textColor:Int): Bitmap {
+    private fun textAsBitmap(text: String, textSize: Float, textColor: Int): Bitmap {
         val dp = resources.displayMetrics.density.roundToInt()
         val paint = Paint(Paint.ANTI_ALIAS_FLAG)
-        paint.textSize = textSize*dp
+        paint.textSize = textSize * dp
         paint.color = textColor
         paint.textAlign = Paint.Align.CENTER
 
-        val image = Bitmap.createBitmap(112*dp, 112*dp, Bitmap.Config.ARGB_8888)
+        val image = Bitmap.createBitmap(112 * dp, 112 * dp, Bitmap.Config.ARGB_8888)
 
         image.eraseColor(getThemeAccentColor(this))
         val canvas = Canvas(image)
-        canvas.drawText(text, 56f*dp, 56f*dp + paint.textSize/3, paint)
+        canvas.drawText(text, 56f * dp, 56f * dp + paint.textSize / 3, paint)
         return image
     }
 

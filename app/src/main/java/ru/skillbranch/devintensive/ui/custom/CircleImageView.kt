@@ -6,6 +6,7 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
+import android.util.Log
 import android.util.TypedValue
 import android.widget.ImageView
 import androidx.annotation.ColorRes
@@ -13,19 +14,17 @@ import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.utils.Utils
 
-class CircleImageView @JvmOverloads constructor(
+class CircleImageView(
         context: Context,
-        attrs: AttributeSet? = null,
-        defStyleAttr: Int = 0
-) : ImageView(context, attrs, defStyleAttr) {
+        attrs: AttributeSet? = null
+) : ImageView(context, attrs){
 
     companion object {
         private const val DEFAULT_BORDER_COLOR = Color.WHITE
-        private const val DEFAULT_BORDER_WIDTH = 2
     }
 
     private var borderColor = DEFAULT_BORDER_COLOR
-    private var borderWidth = Utils.convertDpToPx(DEFAULT_BORDER_WIDTH)
+    private var borderWidth = Utils.convertDpToPx(2)
     private var originalDrawable: Drawable? = null
     private var defaultAvatar: Bitmap? = null
     private var text: String? = null
@@ -42,18 +41,21 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
+        Log.d("M_CircleImageView", "setImageDrawable")
         originalDrawable = drawable
         val img = getBitmapFromDrawable(drawable) ?: generateDefaultAvatar()
         super.setImageDrawable(getRoundedDrawable(img))
     }
 
     override fun setImageResource(resId: Int) {
+        Log.d("M_CircleImageView", "setImageResource")
         originalDrawable = resources.getDrawable(resId, context.theme)
         val img = BitmapFactory.decodeResource(resources, resId)
         super.setImageDrawable(getRoundedDrawable(img))
     }
 
     override fun setImageBitmap(bitmap: Bitmap?) {
+        Log.d("M_CircleImageView", "setImageBitmap")
         originalDrawable = BitmapDrawable(resources, bitmap)
         super.setImageDrawable(getRoundedDrawable(bitmap))
     }
@@ -149,7 +151,8 @@ class CircleImageView @JvmOverloads constructor(
             if (defaultAvatar == null) {
                 defaultAvatar = generateDefaultAvatar()
                 canvas?.drawBitmap(defaultAvatar!!, 0f, 0f, null)
-            } else
+            }
+            else
                 canvas?.drawBitmap(defaultAvatar!!, 0f, 0f, null)
         }
 
