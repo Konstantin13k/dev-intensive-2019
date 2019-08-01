@@ -84,14 +84,6 @@ class ProfileActivity : AppCompatActivity() {
         isEditMode = savedInstanceState?.getBoolean(IS_EDIT_MODE, false) ?: false
         showCurrentMode(isEditMode)
 
-        btn_edit.setOnClickListener {
-            if (isEditMode) saveProfileinfo()
-            isEditMode = !isEditMode
-            showCurrentMode(isEditMode)
-        }
-        btn_switch_theme.setOnClickListener {
-            viewModel.switchTheme()
-        }
         et_repository.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {}
@@ -99,6 +91,19 @@ class ProfileActivity : AppCompatActivity() {
                 viewModel.setRepositoryState(!Utils.isValid(s.toString()))
             }
         })
+
+        btn_edit.setOnClickListener {
+            if (wr_repository.isErrorEnabled) {
+                et_repository.text?.clear()
+                viewModel.setRepositoryState(false)
+            }
+            if (isEditMode) saveProfileinfo()
+            isEditMode = !isEditMode
+            showCurrentMode(isEditMode)
+        }
+        btn_switch_theme.setOnClickListener {
+            viewModel.switchTheme()
+        }
     }
 
     private fun showCurrentMode(isEdit: Boolean) {
@@ -135,11 +140,6 @@ class ProfileActivity : AppCompatActivity() {
     }
 
     private fun saveProfileinfo() {
-        if (wr_repository.isErrorEnabled) {
-            et_repository.text?.clear()
-            viewModel.setRepositoryState(false)
-        }
-
         Profile(
                 et_first_name.text.toString(),
                 et_last_name.text.toString(),
