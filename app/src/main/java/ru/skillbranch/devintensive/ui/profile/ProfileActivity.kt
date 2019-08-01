@@ -61,8 +61,6 @@ class ProfileActivity : AppCompatActivity() {
             }
             drawDefaultAvatar(it["initials"].toString())
         }
-        updateAvatar(profile)
-
     }
 
     private fun updateAvatar(profile: Profile) {
@@ -87,8 +85,7 @@ class ProfileActivity : AppCompatActivity() {
 
         btn_edit.setOnClickListener {
             if (wr_repository.isErrorEnabled) {
-                et_repository.text?.clear()
-                viewModel.setRepositoryState(false)
+                et_repository.setText("")
             }
             if (isEditMode) saveProfileInfo()
             isEditMode = isEditMode.not()
