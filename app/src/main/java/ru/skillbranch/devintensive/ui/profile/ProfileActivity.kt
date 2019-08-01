@@ -1,12 +1,13 @@
 package ru.skillbranch.devintensive.ui.profile
 
-import android.graphics.ColorFilter
-import android.graphics.PorterDuff
-import android.graphics.PorterDuffColorFilter
+import android.content.Context
+import android.graphics.*
+import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.util.TypedValue
 import android.view.View
 import android.widget.EditText
 import android.widget.TextView
@@ -18,6 +19,7 @@ import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.models.Profile
 import ru.skillbranch.devintensive.utils.Utils
 import ru.skillbranch.devintensive.viewmodels.ProfileViewModel
+import kotlin.math.roundToInt
 
 class ProfileActivity : AppCompatActivity() {
 
@@ -30,6 +32,7 @@ class ProfileActivity : AppCompatActivity() {
     lateinit var viewFields: Map<String, TextView>
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        setTheme(R.style.AppTheme)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_profile)
         initViews(savedInstanceState)
@@ -62,6 +65,7 @@ class ProfileActivity : AppCompatActivity() {
             for ((k, v) in viewFields) {
                 v.text = it[k].toString()
             }
+            drawDefaultAvatar(it["initials"].toString())
         }
     }
 
@@ -146,15 +150,30 @@ class ProfileActivity : AppCompatActivity() {
         }
     }
 
-//    override fun onEditorAction(v: TextView?, actionId: Int, event: KeyEvent?): Boolean {
-//        Log.d("M_ProfileActivity", "testsssssssssssssssssssssssss")
-//        if (v?.id == et_repository.id && actionId == EditorInfo.IME_ACTION_DONE) {
-//            Log.d("M_ProfileActivity", "valid")
-//            val repository = et_repository.text.toString()
-//            if (repository.isNotEmpty() && !Utils.validationGitHub(repository)) {
-//                et_repository.error = "Невалидный адрес репозитория"
-//            }
-//        }
-//        return false
-//    }
+    private fun drawDefaultAvatar(initials: String, textSize: Float = 48f, color: Int = Color.WHITE) {
+        val bitmap = textAsBitmap(initials, textSize, color)
+        val drawable = BitmapDrawable(resources, bitmap)
+        iv_avatar.setImageDrawable(drawable)
+    }
+
+    private fun textAsBitmap(text:String, textSize:Float, textColor:Int): Bitmap {
+        val dp = resources.displayMetrics.density.roundToInt()
+        val paint = Paint(Paint.ANTI_ALIAS_FLAG)
+        paint.textSize = textSize*dp
+        paint.color = textColor
+        paint.textAlign = Paint.Align.CENTER
+
+        val image = Bitmap.createBitmap(112*dp, 112*dp, Bitmap.Config.ARGB_8888)
+
+        image.eraseColor(getThemeAccentColor(this))
+        val canvas = Canvas(image)
+        canvas.drawText(text, 56f*dp, 56f*dp + paint.textSize/3, paint)
+        return image
+    }
+
+    private fun getThemeAccentColor(context: Context): Int {
+        val value = TypedValue()
+        context.theme.resolveAttribute(R.attr.colorAccent, value, true)
+        return value.data
+    }
 }

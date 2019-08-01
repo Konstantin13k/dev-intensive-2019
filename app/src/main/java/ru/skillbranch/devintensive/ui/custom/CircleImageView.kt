@@ -6,15 +6,12 @@ import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
 import android.util.AttributeSet
-import android.util.Log
 import android.util.TypedValue
 import android.widget.ImageView
 import androidx.annotation.ColorRes
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
-import androidx.core.graphics.toColorInt
 import ru.skillbranch.devintensive.R
 import ru.skillbranch.devintensive.utils.Utils
-import java.lang.Math.min
 
 class CircleImageView @JvmOverloads constructor(
         context: Context,
@@ -45,21 +42,18 @@ class CircleImageView @JvmOverloads constructor(
     }
 
     override fun setImageDrawable(drawable: Drawable?) {
-        Log.d("M_CircleImageView", "setImageDrawable")
         originalDrawable = drawable
         val img = getBitmapFromDrawable(drawable) ?: generateDefaultAvatar()
         super.setImageDrawable(getRoundedDrawable(img))
     }
 
     override fun setImageResource(resId: Int) {
-        Log.d("M_CircleImageView", "setImageResource")
         originalDrawable = resources.getDrawable(resId, context.theme)
         val img = BitmapFactory.decodeResource(resources, resId)
         super.setImageDrawable(getRoundedDrawable(img))
     }
 
     override fun setImageBitmap(bitmap: Bitmap?) {
-        Log.d("M_CircleImageView", "setImageBitmap")
         originalDrawable = BitmapDrawable(resources, bitmap)
         super.setImageDrawable(getRoundedDrawable(bitmap))
     }
