@@ -1,5 +1,7 @@
 package ru.skillbranch.devintensive.utils
 
+import android.content.res.Resources
+
 object Utils {
     private val exceptions = listOf(
         "enterprise", "features",
@@ -81,15 +83,22 @@ object Utils {
         return builder.toString()
     }
 
-    fun validationGitHub(string: String): Boolean = with(string) {
-        if (matches("github.com/.*".toRegex())
-            || matches("https://github.com/.*".toRegex())
-            || matches("https://www.github.com/.*".toRegex())
-            || matches("www.github.com/.*".toRegex())
-        ) {
-            with(split("github.com/".toRegex())[1]) {
-                return !exceptions.contains(this) && isNotEmpty() && !matches(".*/.*".toRegex())
-            }
-        } else false
+    fun isValid(rep: String): Boolean {
+        val regex = Regex("^(?:https://)?(?:www.)?(?:github.com/)(?!${exceptions.joinToString("|")})\\w+$")
+        return rep.isEmpty() || regex.matches(rep)
+    }
+
+    fun convertPxToDp(px: Int): Int {
+        val scale = Resources.getSystem().displayMetrics.density
+        return (px / scale + 0.5f).toInt()
+    }
+
+    fun convertDpToPx(dp: Int): Int {
+        val scale = Resources.getSystem().displayMetrics.density
+        return (dp * scale + 0.5f).toInt()
+    }
+
+    fun convertSpToPx(sp: Int): Int {
+        return sp * Resources.getSystem().displayMetrics.scaledDensity.toInt()
     }
 }
