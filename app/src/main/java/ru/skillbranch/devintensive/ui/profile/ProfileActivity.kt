@@ -59,8 +59,10 @@ class ProfileActivity : AppCompatActivity() {
             for ((k, v) in viewFields) {
                 v.text = it[k].toString()
             }
+            drawDefaultAvatar(it["initials"].toString())
         }
         updateAvatar(profile)
+
     }
 
     private fun updateAvatar(profile: Profile) {
